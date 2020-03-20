@@ -13,24 +13,74 @@
 
    </div> 
    <script type="text/babel">
-       const name  = 'Charles';
-       const handle = '@charles';
-       function NameComponent(props) {
-            return <h1>{props.name}</h1>
-       }
-       function HandleComponent (props){
-            return <h1>{props.handle}</h1>
-       }
+        
+        const FriendList = (props) => {
+            return (
+                <ul>
+                  {props.list.map((name) => (
+                      <li key={name}>
+                        <span>{name}</span>
+                        <button onClick={() => props.onRemoveFriend(name)}>Remove</button>
+                      </li>
+                  ))}
+                </ul>
+            )
+        }
+        class App extends React.Component {
+            constructor(props){
+                super(props);
+                this.state = {
+                    friends: ['Eric','Stacy','Jedy','Vicky'],
+                    input : ''
 
-       const App = () => {
-           return (
-               <div id="container">
-                  <NameComponent name={name}/>
-                  <HandleComponent handle={handle}/>
-               </div>
-           )
-       }
-       
+                }
+                this.handleRemoveFriend = this.handleRemoveFriend.bind(this);
+                this.updateInput = this.updateInput.bind(this);
+                this.handleAddFriend = this.handleAddFriend.bind(this);
+            }
+
+            handleAddFriend(name) {
+                this.setState((currentState) => {
+                    return {
+                        friends: currentState.friends.concat([this.state.input]),
+                        input: '',
+                    }
+                })
+            }
+
+            handleRemoveFriend(name) {
+                this.setState((currentState) => {
+                    return {
+                        friends: currentState.friends.filter((friend) => friend !== name)
+                    }
+                })
+            }
+
+            updateInput(e) {
+                const value = e.target.value
+                this.setState({
+                    input: value
+                })
+            }
+            
+            render() {
+                return(
+                    <div>
+                        <input 
+                            type="text"
+                            placeholder="new friend"
+                            value={this.state.input}
+                            onChange={this.updateInput}/>
+                        <button type="submit" onClick={this.handleAddFriend}>submit</button>
+                        <FriendList
+                         list={this.state.friends}
+                         onRemoveFriend={this.handleRemoveFriend}
+                         />
+                    </div>
+                )
+            }
+        }
+               
 
        ReactDOM.render(
            <App/>,
